@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-DarkVoice - Audio Steganography Encryptor (with Key Mode)
+StegAudio - Alexuuhat
 """
 
 import wave
@@ -8,22 +8,6 @@ import argparse
 import sys
 import os
 import hashlib
-
-# Golden Color
-GOLD = "\033[38;5;220m"
-RESET = "\033[0m"
-
-BANNER = GOLD + r"""
-██████╗  █████╗ ██████╗ ██╗  ██╗██╗   ██╗ ██████╗ ██╗ ██████╗ ███████╗
-██╔══██╗██╔══██╗██╔══██╗██║ ██╔╝██║   ██║██╔═══██╗██║██╔════╝ ██╔════╝
-██   ██╔███████║██████╔╝█████╔╝ ██║   ██║██║   ██║██║██║  ███╗█████╗  
-██╔══██╗██╔══██║██╔══██╗██╔═██╗ ██║   ██║██║   ██║██║██║   ██║██╔══╝  
-██████╔╝██║  ██║██║  ██║██║  ██╗╚██████╔╝╚██████╔╝██║╚██████╔╝███████╗
-╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝   ╚═╝ ╚═════╝  ╚═════╝ ╚═╝ ╚═════╝ ╚══════╝
-
-          DarkVoice Encryptor - Hide Secret Text Inside Audio
-""" + RESET
-
 
 HELP_TEXT = """
 Usage:
@@ -42,7 +26,7 @@ Info:
 def encrypt_message(message, key):
     """Encrypt message with key using simple XOR hash"""
     hashed = hashlib.sha256(key.encode()).digest()
-    encrypted = []
+    encrypted = bytearray()
 
     for i, ch in enumerate(message.encode()):
         encrypted.append(ch ^ hashed[i % len(hashed)])
@@ -51,7 +35,6 @@ def encrypt_message(message, key):
 
 
 def encode_audio(input_file, output_file, secret_msg, key=None):
-
     # If key provided → encrypt message first
     if key:
         print("[+] Key Mode Enabled")
@@ -64,8 +47,12 @@ def encode_audio(input_file, output_file, secret_msg, key=None):
         binary = ''.join(format(ord(i), '08b') for i in secret_msg)
         binary += "1111111111111110"
 
-    with wave.open(input_file, 'rb') as audio:
-        frames = bytearray(list(audio.readframes(audio.getnframes())))
+    try:
+        with wave.open(input_file, 'rb') as audio:
+            frames = bytearray(audio.readframes(audio.getnframes()))
+    except wave.Error:
+        print("[!] Error: Not a valid WAV file")
+        sys.exit(1)
 
     if len(binary) > len(frames):
         print("[!] Error: Audio too small for message")
@@ -85,8 +72,6 @@ def encode_audio(input_file, output_file, secret_msg, key=None):
 
 
 if __name__ == "__main__":
-    print(BANNER)
-
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument('-i', '--input')
     parser.add_argument('-o', '--output')
