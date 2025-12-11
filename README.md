@@ -69,13 +69,13 @@ If encryption mode is enabled:
 ### 🔐 Encrypt / Hide Message
 
 ```bash
-python3 run.py -i input.wav -o output.wav -m "Write your secret message here" --key "123"
+python3 Encrypt.py -i input.wav -o output.wav -m "Write your secret message here" --key "123"
 ```
 
 ### 🔓 Decrypt / Extract Message
 
 ```bash
-python3 run.py -i input.wav --key "123"
+python3 Decrypt.py -i input.wav --key "123"
 ```
 
 ---
