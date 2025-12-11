@@ -84,10 +84,11 @@ python3 Decrypt.py -i input.wav --key "123"
 
 ```
 StegAudio/
-│── run.py
+│── Encrypt.py
+│── Decrypt.py
 │── README.md
 │── samples/
-│      └── example.wav
+│      └── Demo.wav
 └── output/
 ```
 
